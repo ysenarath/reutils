@@ -13,10 +13,10 @@ setuptools.setup(
     version="0.0.1",
     author="Yasas Senarath",
     author_email="ysenarath.93@gmail.com",
-    description="Simple and extensible framework for end to end text based natural language understanding.",
+    description="Terminal Logger for Python.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ysenarath/textflow",
+    url="https://github.com/ysenarath/sole",
     packages=setuptools.find_packages(),
     install_requires=requirements,
     classifiers=[
