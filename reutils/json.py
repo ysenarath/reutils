@@ -1,5 +1,10 @@
 import json
 
+__all__ = [
+    'dump',
+    'load',
+]
+
 
 def _get_mode(fp, mode):
     if mode is None:

@@ -1,6 +1,10 @@
 import pickle
 import os
 
+__all__ = [
+    'cache',
+]
+
 
 def cache(path):
     def decorate_func(func):

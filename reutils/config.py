@@ -1,5 +1,11 @@
 import configparser
 
+__all__ = [
+    'load',
+    'save',
+    'dump',
+]
+
 
 def load(fp):
     config = configparser.ConfigParser()

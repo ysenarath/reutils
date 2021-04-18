@@ -1,6 +1,9 @@
 import datetime
 import logging
-import time
+
+__all__ = [
+    'Logger',
+]
 
 FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
@@ -19,6 +22,7 @@ class Progress:
         self.print = _cls_print
         self._update_time = None
         self._update_freq = datetime.timedelta(seconds=2)
+        self._message = None
 
     def __enter__(self):
         self.update(0)
@@ -30,9 +34,13 @@ class Progress:
         update_time = datetime.datetime.now()
         if (self._update_time is None) or (update_time >= self._update_time):
             np = int(pval / 5)
-            message = '{} {:>3}% [{}{}]'.format(self.desc, pval, '#' * np, '-' * (20 - np))
-            self.print(message)
+            self._message = '{} {:>3}% [{}{}]'.format(self.desc, pval, '#' * np, '-' * (20 - np))
+            if self.print is not None:
+                self.print(self._message)
             self._update_time = update_time + self._update_freq
+
+    def __str__(self):
+        return self._message
 
     # noinspection PyMethodMayBeStatic
     def __exit__(self, type, value, traceback):
@@ -40,32 +48,39 @@ class Progress:
         self.update(self.size)
 
 
+class ProgressLogger:
+    def __init__(self, logger):
+        self.logger = logger
+        self.print_func = self.logger.info
+
+    def __getattr__(self, item):
+        self.print_func = getattr(self.logger, item)
+        return self
+
+    def __call__(self, size=0, desc=None):
+        progress_bar = Progress(size, desc)
+        progress_bar.print = self.print_func
+        return progress_bar
+
+
 class Logger:
     def __init__(self, name='Unknown', level=1):
         self.logger = logging.getLogger(name)
         self.logger.setLevel(level)
 
-    def log(self, level, message):
-        self.logger.log(level, message)
-
-    def info(self, message):
-        self.logger.info(message)
+    def __getattr__(self, item):
+        return getattr(self.logger, item)
 
     def status(self, message, status):
-        self.info('{} [{}]'.format(message, status.upper()))
+        self.logger.info('{} [{}]'.format(message, status.upper()))
 
-    # noinspection PyMethodMayBeStatic,SpellCheckingInspection
-    def progress(self, size=0, desc=None):
-        prog = Progress(size, desc)
-        prog.print = self.info
-        return prog
+    @property
+    def progress(self):
+        return ProgressLogger(self.logger)
 
 
-if __name__ == '__main__':
-    logger = Logger(__name__)
-    logger.status('Initializing program...', 'starting')
+def main():
+    logger = Logger()
     with logger.progress(10) as p:
-        for i in range(11):
-            p.update(i)
-            time.sleep(10)
-    logger.status('Initializing program...', 'complete')
+        for x in range(1, 10):
+            p.update(x)
