@@ -13,7 +13,7 @@ setuptools.setup(
     version="0.0.1",
     author="Yasas Senarath",
     author_email="ysenarath.93@gmail.com",
-    description="Terminal Logger for Python.",
+    description="Just another miscellaneous python utility library.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/ysenarath/sole",
