@@ -1,2 +1,2 @@
-# sole
-Terminal Logger for Python
+# coreutils
+Utilities for Python
