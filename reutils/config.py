@@ -9,3 +9,6 @@ def load(fp):
 def save(config, fp):
     with open(fp, 'w') as configfile:
         config.write(configfile)
+
+
+dump = save
