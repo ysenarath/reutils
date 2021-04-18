@@ -9,7 +9,7 @@ with open('requirements.txt') as fh:
     requirements = fh.read().strip().split('\n')
 
 setuptools.setup(
-    name="sole",
+    name="coreutils",
     version="0.0.2",
     author="Yasas Senarath",
     author_email="ysenarath.93@gmail.com",
