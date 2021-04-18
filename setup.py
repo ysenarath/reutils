@@ -16,7 +16,7 @@ setuptools.setup(
     description="Just another miscellaneous python utility library.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ysenarath/sole",
+    url="https://github.com/ysenarath/reutils",
     packages=setuptools.find_packages(),
     install_requires=requirements,
     classifiers=[
