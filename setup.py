@@ -10,7 +10,7 @@ with open('requirements.txt') as fh:
 
 setuptools.setup(
     name="coreutils",
-    version="0.0.2",
+    version="0.0.1",
     author="Yasas Senarath",
     author_email="ysenarath.93@gmail.com",
     description="Terminal Logger for Python.",
