@@ -49,10 +49,11 @@ def dump(obj, fp, mode=None, **kwargs):
                 json.dump(obj, file)
 
 
-def load(fp, mode=None, **kwargs):
+def load(fp, mode=None, skip_error_lines=True, **kwargs):
     """Load json/jsonl file.
 
     :param fp: path to the file {str}
+    :param skip_error_lines: whether to skip error lines
     :param mode: input file type {'json, 'jsonl'}. If not provided will determine using file extension.
     :return: contents of file as dict or list
     """
@@ -62,11 +63,19 @@ def load(fp, mode=None, **kwargs):
         records = []
         if hasattr(fp, 'read'):
             for line in fp.read().strip().split('\n'):
-                records.append(json.loads(line.strip()))
+                try:
+                    records.append(json.loads(line.strip()))
+                except json.decoder.JSONDecodeError as e:
+                    if not skip_error_lines:
+                        raise e
         else:
             with open(fp, 'r', **kwargs) as file:
                 for line in file.read().strip().split('\n'):
-                    records.append(json.loads(line.strip()))
+                    try:
+                        records.append(json.loads(line.strip()))
+                    except json.decoder.JSONDecodeError as e:
+                        if not skip_error_lines:
+                            raise e
         return records
     else:
         if hasattr(fp, 'read'):
