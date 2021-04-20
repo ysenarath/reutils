@@ -26,7 +26,7 @@ def dump(obj, fp, mode=None, **kwargs):
 
     :param obj: input object
     :param fp: path to the file {str}
-    :param mode: input file type {'json', 'jsonl'}. If not provided will determine using file extension.
+    :param mode: input file type {'json, 'jsonl'}. If not provided will determine using file extension.
     :return: contents of file as dict or list
     :return:
     """
@@ -53,7 +53,7 @@ def load(fp, mode=None, **kwargs):
     """Load json/jsonl file.
 
     :param fp: path to the file {str}
-    :param mode: input file type {'json', 'jsonl'}. If not provided will determine using file extension.
+    :param mode: input file type {'json, 'jsonl'}. If not provided will determine using file extension.
     :return: contents of file as dict or list
     """
     mode = _get_mode(fp, mode)
@@ -61,11 +61,11 @@ def load(fp, mode=None, **kwargs):
     if mode == 'jsonl':
         records = []
         if hasattr(fp, 'read'):
-            for line in fp.read().split('\n'):
+            for line in fp.read().strip().split('\n'):
                 records.append(json.loads(line.strip()))
         else:
             with open(fp, 'r', **kwargs) as file:
-                for line in file.read().split('\n'):
+                for line in file.read().strip().split('\n'):
                     records.append(json.loads(line.strip()))
         return records
     else:
