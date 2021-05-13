@@ -10,7 +10,7 @@ with open('requirements.txt') as fh:
 
 setuptools.setup(
     name="reutils",
-    version="0.0.6",
+    version="0.0.7",
     author="Yasas Senarath",
     author_email="ysenarath.93@gmail.com",
     description="Just another miscellaneous python utility library.",
