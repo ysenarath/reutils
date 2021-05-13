@@ -9,7 +9,8 @@ __all__ = [
 
 def load(fp):
     config = configparser.ConfigParser()
-    return config.read(fp)
+    config.read(fp)
+    return config
 
 
 def save(config, fp):
