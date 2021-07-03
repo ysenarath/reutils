@@ -1,12 +1,19 @@
 import time
 
-from reutils.logging import Logger
+from reutils import logging_v2 as logging
 
-logger = Logger(__name__)
+logging.basicConfig(format=logging.LOGGING_FORMAT)
+
+logger = logging.getLogger(__name__)
+
+logger.setLevel(logging.INFO)
 
 if __name__ == '__main__':
-    with logger.progress(10, 'Progress') as p:
-        for i in range(10):
-            time.sleep(2)
+    logger.error('Hello from example.')
+    items = list(range(10))
+    for _ in logger.progress(items):
+        time.sleep(1)
+    with logger.progress.p(len(items), 'Progress') as p:
+        for i, _ in enumerate(items):
+            time.sleep(1)
             p.update(i + 1)
-
