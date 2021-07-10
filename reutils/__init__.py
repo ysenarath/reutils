@@ -12,8 +12,11 @@ from reutils import json
 from reutils import cache
 from reutils import config
 
+logging_v2 = logging
+
 __all__ = [
     'logging',
+    'logging_v2',
     'json',
     'cache',
     'config',

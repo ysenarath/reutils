@@ -5,8 +5,15 @@ __all__ = [
     'Logger',
 ]
 
-FORMAT = '%(asctime)-15s %(message)s'
-logging.basicConfig(format=FORMAT)
+LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=LOGGING_FORMAT)
+
+NOTSET = logging.NOTSET
+INFO = logging.INFO
+DEBUG = logging.DEBUG
+WARNING = logging.WARNING
+ERROR = logging.ERROR
+CRITICAL = logging.CRITICAL
 
 
 def _cls_print(message):
@@ -28,7 +35,6 @@ class Progress:
         self.update(0)
         return self
 
-    # noinspection SpellCheckingInspection
     def update(self, v):
         pval = int(v * 100 / self.size)
         update_time = datetime.datetime.now()
@@ -42,7 +48,6 @@ class Progress:
     def __str__(self):
         return self._message
 
-    # noinspection PyMethodMayBeStatic
     def __exit__(self, type, value, traceback):
         self._update_time = None
         self.update(self.size)
@@ -57,31 +62,44 @@ class ProgressLogger:
         self.print_func = getattr(self.logger, item)
         return self
 
-    def __call__(self, size=0, desc=None):
-        progress_bar = Progress(size, desc)
-        progress_bar.print = self.print_func
-        return progress_bar
+    def progress_bar(self, size=0, desc=None):
+        temp = Progress(size, desc)
+        temp.print = self.print_func
+        return temp
+
+    @property
+    def p(self):
+        return self.progress_bar
+
+    def __call__(self, items, size=None, desc=None):
+        if size is None:
+            size = len(items)
+        with self.progress_bar(size, desc) as p:
+            for i, item in enumerate(items):
+                yield item
+                p.update(i + 1)
 
 
-class Logger:
-    def __init__(self, name='Unknown', level=1):
-        print('This module is depreciated use version v2 (`logger_v2`) and eventually it will replace this logger.')
-        self.logger = logging.getLogger(name)
-        self.logger.setLevel(level)
-
-    def __getattr__(self, item):
-        return getattr(self.logger, item)
-
-    def status(self, message, status):
-        self.logger.info('{} [{}]'.format(message, status.upper()))
+class Logger(logging.Logger):
+    def __init__(self, name=None, level=logging.NOTSET):
+        super().__init__(name, level)
 
     @property
     def progress(self):
-        return ProgressLogger(self.logger)
+        return ProgressLogger(self)
 
 
-def main():
-    logger = Logger()
-    with logger.progress(10) as p:
-        for x in range(1, 10):
-            p.update(x)
+def getLogger(name=None):
+    logging_class = logging.getLoggerClass()
+    logging._acquireLock()
+    try:
+        logging.setLoggerClass(Logger)
+        logger = logging.getLogger(name)
+        logging.setLoggerClass(logging_class)
+        return logger
+    finally:
+        logging._releaseLock()
+
+
+def basicConfig(**kwargs):
+    logging.basicConfig(**kwargs)
